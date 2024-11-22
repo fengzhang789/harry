@@ -30,6 +30,7 @@ const client = new Client({
     GatewayIntentBits.Guilds,
     GatewayIntentBits.MessageContent,
     GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.GuildMessageReactions,
   ],
 });
 
@@ -64,6 +65,14 @@ client.on("messageCreate", (message) => {
     if (Math.random() < responseProbability) {
       respondToGaming(message);
     }
+  }
+});
+
+client.on("messageReactionAdd", (reaction, user) => {
+  if (reaction.bot) return;
+
+  if (reaction.emoji.name === "finance_exec_harry_wang") {
+    respondToGaming(reaction.message);
   }
 });
 
