@@ -15,22 +15,33 @@ const rest = new REST({ version: '10' }).setToken(process.env.TOKEN);
 try {
   console.log('Started refreshing application (/) commands.');
 
-  await rest.put(Routes.applicationCommands(process.env.CLIENT_ID, process.env.GUILD_ID), { body: commands });
+  await rest.put(Routes.applicationCommands(process.env.CLIENT_ID), { body: commands });
 
   console.log('Successfully reloaded application (/) commands.');
 } catch (error) {
   console.error(error);
 }
 
-
-
-const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildMessages] });
 
 client.on('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`);
 });
 
-client.on('interactionCreate', async interaction => {
+client.on('messageCreate', (message) => {
+  // Ignore messages from the bot itself
+  if (message.author.bot) return;
+
+  // Check for a specific message and reply
+  if (message.content.toLowerCase().includes("gaming")) {
+    message.channel.send('just game');
+    message.react('<:finance_exec_harry_wang:1306807805432303736>')
+  }
+
+
+});
+
+client.on('interactionCreate', async (interaction) => {
   if (!interaction.isChatInputCommand()) return;
 
   if (interaction.commandName === 'ping') {
